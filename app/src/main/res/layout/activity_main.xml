@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_web1"
+    android:textAlignment="center"
+    tools:context=".MainActivity">
+
+
+    <ToggleButton
+        android:id="@+id/BtSend"
+        android:layout_width="60dp"
+        android:layout_height="35dp"
+
+
+        android:layout_marginTop="68dp"
+        android:background="@drawable/toggle_switch"
+        android:text="ToggleButton"
+        android:textColor="#FFFFFF"
+        android:textOff=""
+        android:textOn=""
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/TV_Latitud2"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/TV_Latitud2"
+        app:layout_constraintTop_toBottomOf="@+id/Hora_TV" />
+
+    <TextView
+        android:id="@+id/TV_Latitud2"
+        android:layout_width="277dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="68dp"
+        android:background="@drawable/bg_bttn"
+        android:bottomLeftRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:fontFamily="@font/doppio_one"
+        android:text=" Enviar ubicación:"
+        android:textAlignment="viewStart"
+        android:textColor="#FFFFFF"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Hora_TV" />
+
+    <TextView
+        android:id="@+id/TV_titulo"
+        android:layout_width="361dp"
+        android:layout_height="212dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/logo"
+        android:bottomLeftRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:fontFamily="@font/bungee_outline"
+        android:rotationX="12"
+        android:textAlignment="center"
+        android:textColor="#FFD500"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/getapp"
+        android:layout_width="121dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="72dp"
+        android:fontFamily="@font/coiny"
+        android:gravity="center"
+        android:text="@string/applink"
+        android:textColor="#FFFF"
+        android:textColorLink="#FFD500"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TV_Latitud2"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/Coords_TV"
+        style="@style/Widget.AppCompat.TextView"
+        android:layout_width="304dp"
+        android:layout_height="95dp"
+
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg2"
+        android:fontFamily="@font/doppio_one"
+        android:gravity="center_horizontal|fill_vertical"
+        android:text="Coordenadas:"
+        android:textAlignment="gravity"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textColorHighlight="#FFC200"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TV_titulo" />
+
+    <TextView
+        android:id="@+id/Hora_TV"
+        android:layout_width="307dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg2"
+        android:bottomLeftRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:fontFamily="@font/doppio_one"
+        android:gravity="center_horizontal|fill_vertical"
+        android:text="Hora:"
+        android:textAlignment="gravity"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Coords_TV" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

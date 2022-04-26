@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TaxiEpic</string>
+
+    <string name="applink" >
+    <a href="http://finders.sytes.net">Finders!</a>
+    </string>
+
+
+</resources>
