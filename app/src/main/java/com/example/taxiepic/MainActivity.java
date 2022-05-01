@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothHeadset;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -48,7 +50,12 @@ public class MainActivity extends AppCompatActivity {
     ToggleButton BtSend;
     android.widget.TextView Time, Coords;
     String CoordendasTxt;
+    Switch TaxiID;
+    String ID;
 
+    BluetoothHeadset bluetoothHeadset;
+
+    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         BtSend = (ToggleButton) findViewById(R.id.BtSend);
         Coords = (TextView) findViewById(R.id.Coords_TV);
         Time = (TextView) findViewById(R.id.Hora_TV);
-
+        TaxiID = (Switch) findViewById(R.id.TaxiSwitch);
         BtSend.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (ActivityCompat.checkSelfPermission(MainActivity.this,
                     Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) {
@@ -89,10 +96,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
     private void GetLocation() {
         LocationListener locationListener = new LocationListener() {
             @Override
@@ -119,23 +122,31 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     PUERTO = 10000;
-                    IPaddress = InetAddress.getByName("18.223.199.20");
-                    String Mensaje =  String.valueOf(CoordendasTxt + ", "+TimeVar);
-
+                    if(TaxiID.isChecked()){
+                        ID = "2";
+                    }else{
+                        ID = "1";
+                    }
+                    IPaddress = InetAddress.getByName("192.168.20.23");
+                    String Mensaje =  String.valueOf(CoordendasTxt + ", "+TimeVar + ", " + ID);
                     udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
                     udpClientThread.start();
 
-                    IPaddress = InetAddress.getByName("52.71.214.41");
-                    udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
-                    udpClientThread.start();
-
-                    IPaddress = InetAddress.getByName("34.200.4.183");
-                    udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
-                    udpClientThread.start();
-
-                    IPaddress = InetAddress.getByName("34.235.195.32");
-                    udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
-                    udpClientThread.start();
+                    //IPaddress = InetAddress.getByName("18.223.199.20");
+                    //udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
+                    //udpClientThread.start();
+//
+                    //IPaddress = InetAddress.getByName("52.71.214.41");
+                    //udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
+                    //udpClientThread.start();
+//
+                    //IPaddress = InetAddress.getByName("34.200.4.183");
+                    //udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
+                    //udpClientThread.start();
+//
+                    //IPaddress = InetAddress.getByName("34.235.195.32");
+                    //udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
+                    //udpClientThread.start();
 
                     if(Status) {
                         handler.postDelayed(this, delay);

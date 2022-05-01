@@ -18,7 +18,7 @@
         android:layout_height="35dp"
 
 
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/toggle_switch"
         android:text="ToggleButton"
         android:textColor="#FFFFFF"
@@ -34,7 +34,7 @@
         android:id="@+id/TV_Latitud2"
         android:layout_width="277dp"
         android:layout_height="35dp"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/bg_bttn"
         android:bottomLeftRadius="10dp"
         android:bottomRightRadius="10dp"
@@ -47,7 +47,6 @@
         android:topLeftRadius="10dp"
         android:topRightRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Hora_TV" />
 
@@ -132,6 +131,53 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Coords_TV" />
+
+    <Button
+        android:id="@+id/BluetoothConnectTB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Conectar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TV_Latitud2" />
+
+    <LinearLayout
+        android:layout_width="155dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/BluetoothConnectTB"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/Taxi1TV"
+            android:layout_width="14dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Taxi 1"
+            android:textAlignment="textEnd"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
+
+        <Switch
+            android:id="@+id/TaxiSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="15dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Taxi 2"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
