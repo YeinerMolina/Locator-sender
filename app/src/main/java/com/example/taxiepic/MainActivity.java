@@ -6,10 +6,10 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothHeadset;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,24 +17,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.List;
-import java.util.Locale;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,34 +36,75 @@ public class MainActivity extends AppCompatActivity {
     String TimeVar;
     Handler handler = new Handler();
     UdpClientThread udpClientThread;
-    TCPClientThread tcpClientThread;
     private boolean Status = false;
     private final int delay = 5000;
     Switch ProtocolSwitch;
     InetAddress IPaddress;
     ToggleButton BtSend;
-    android.widget.TextView Time, Coords;
+    android.widget.TextView Time, Coords, Funciona;
     String CoordendasTxt;
     Switch TaxiID;
     String ID;
+    Button BTConnect;
 
-    BluetoothHeadset bluetoothHeadset;
+    Handler BluetoothIn;
+    final int handlerState = 0;
+    private BluetoothAdapter btAdapter = null;
+    private BluetoothSocket btSocket = null;
+    private StringBuilder DataStringIN = new StringBuilder();
+    private ConnectedThread MyConextionBT;
 
-    BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
+    private static String address = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        BluetoothIn = new Handler() {
+            public void handlerMessage(android.os.Message msg) {
+                if (msg.what == handlerState) {
+                    char MyCharacter = (char) msg.obj;
+
+                    if (MyCharacter == 'a') {
+                        Funciona.setText("Sí funciona");
+                    }
+                }
+            }
+        };
+
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+        VerificarEstadoBT();
+
+        Funciona = (TextView) findViewById(R.id.Funciona);
+        BTConnect = (Button) findViewById(R.id.BluetoothConnectTB);
         BtSend = (ToggleButton) findViewById(R.id.BtSend);
         Coords = (TextView) findViewById(R.id.Coords_TV);
         Time = (TextView) findViewById(R.id.Hora_TV);
         TaxiID = (Switch) findViewById(R.id.TaxiSwitch);
+
+        BTConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (btSocket != null) {
+                    try {
+                        btSocket.close();
+                    } catch (IOException e) {
+                        Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
+                    }
+                    finish();
+                }
+            }
+        });
+
+
         BtSend.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (ActivityCompat.checkSelfPermission(MainActivity.this,
                     Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) {
                 GetLocation();
+                GetBTData();
                 if (CoordendasTxt != null) {
                     if (BtSend.isChecked()) {
                         Status = true;
@@ -96,6 +131,63 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+        }
+        return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
+    }
+
+    protected void onResume(){
+        super.onResume();
+
+        Intent intent = getIntent();
+        address = intent.getStringExtra(DispositivosVinculados.EXTRA_DEVICE_ADDRESS);
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);
+
+        try {
+            btSocket = createBluetoothSocket(device);
+        }catch (IOException e){
+            Toast.makeText(getBaseContext(), "No se pudo crear socket", Toast.LENGTH_LONG).show();
+        }
+
+        try {
+            btSocket.connect();
+        }catch (IOException e){
+            try {
+                btSocket.close();
+            }catch (IOException e2){}
+        }
+        MyConextionBT = new ConnectedThread(btSocket);
+        MyConextionBT.start();
+
+    }
+
+    protected void onPause(){
+        super.onPause();
+        try {
+            btSocket.close();
+        }catch (IOException e){}
+    }
+
+    private void VerificarEstadoBT() {
+
+        if (btAdapter == null) {
+            Toast.makeText(getBaseContext(), "El dispositivo no soporta bluetooth", Toast.LENGTH_LONG).show();
+        } else {
+            if (!btAdapter.isEnabled()) {
+
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                }else{
+                    Intent enableBtintent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtintent, 1);
+                }
+            }
+        }
+
+
+    }
+
     private void GetLocation() {
         LocationListener locationListener = new LocationListener() {
             @Override
@@ -115,6 +207,10 @@ public class MainActivity extends AppCompatActivity {
         catch (SecurityException e) {
             e.printStackTrace();
         }
+    }
+
+    private void GetBTData(){
+        MyConextionBT.write("Wenas");
     }
 
     public void Send_Data_UDP(){
@@ -162,5 +258,47 @@ public class MainActivity extends AppCompatActivity {
             }}
             , delay);
     }
+
+
+    private class ConnectedThread extends Thread {
+
+        private final InputStream mmInStream;
+        private final OutputStream mmOutStream;
+
+        public ConnectedThread(BluetoothSocket socket){
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+            try {
+                tmpIn = socket.getInputStream();
+                tmpOut = socket.getOutputStream();
+            }catch (IOException e){}
+            mmInStream = tmpIn;
+            mmOutStream = tmpOut;
+        }
+
+        public void run(){
+            byte[] byte_in = new byte[1];
+            while(true){
+                try{
+                    mmInStream.read(byte_in);
+                    char ch = (char) byte_in[0];
+                    BluetoothIn.obtainMessage(handlerState, ch).sendToTarget();
+                }catch (IOException e){
+                    break;
+                }
+            }
+        }
+
+        public void write(String input){
+            try {
+                mmOutStream.write(input.getBytes());
+            }catch (IOException e2){
+                Toast.makeText(getBaseContext(),"La conexión falló", Toast.LENGTH_LONG).show();
+                finish();
+            }
+        }
+
+    }
+
 
 }

@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Yu/AndroidStudioProjects/TaxiEpic/app/src/main/res/layout/activity_dispositivos_vinculados.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/Yu/AndroidStudioProjects/TaxiEpic/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Users/Yu/AndroidStudioProjects/TaxiEpic/app/src/main/res/layout/dispositivos_encontrados.xml" value="0.22826086956521738" />
         <entry key="..\:/Users/Yu/AndroidStudioProjects/TaxiEpic/app/src/main/res/menu/overflow.xml" value="0.1984375" />
       </map>
     </option>
