@@ -13,6 +13,98 @@
 
 
     <TextView
+        android:id="@+id/TV_titulo"
+        android:layout_width="361dp"
+        android:layout_height="212dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/logo"
+        android:bottomLeftRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:fontFamily="@font/bungee_outline"
+        android:rotationX="12"
+        android:textAlignment="center"
+        android:textColor="#FFD500"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/Coords_TV"
+        style="@style/Widget.AppCompat.TextView"
+        android:layout_width="304dp"
+        android:layout_height="95dp"
+        android:background="@drawable/bg2"
+        android:layout_marginTop="224dp"
+        android:fontFamily="@font/doppio_one"
+        android:gravity="center_horizontal|fill_vertical"
+        android:text="Coordenadas:"
+        android:textAlignment="gravity"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textColorHighlight="#FFC200"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ToggleButton
+        android:id="@+id/BtSend"
+        android:layout_width="60dp"
+        android:layout_height="35dp"
+
+
+        android:layout_marginTop="20dp"
+        android:background="@drawable/toggle_switch"
+        android:text="ToggleButton"
+        android:textColor="#FFFFFF"
+        android:textOff=""
+        android:textOn=""
+        app:cornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/TV_Latitud2"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/TV_Latitud2"
+        app:layout_constraintTop_toBottomOf="@+id/Hora_TV" />
+
+    <TextView
+        android:id="@+id/Hora_TV"
+        android:layout_width="307dp"
+        android:layout_height="100dp"
+        android:background="@drawable/bg2"
+        android:layout_marginTop="12dp"
+        android:bottomLeftRadius="10dp"
+        android:bottomRightRadius="10dp"
+        android:fontFamily="@font/doppio_one"
+        android:gravity="center_horizontal|fill_vertical"
+        android:text="Hora:"
+        android:textAlignment="gravity"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:topLeftRadius="10dp"
+        android:topRightRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Coords_TV" />
+
+    <Button
+        android:id="@+id/BluetoothConnectTB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Desconectar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TV_Latitud2" />
+
+    <TextView
         android:id="@+id/Funciona"
         android:layout_width="161dp"
         android:layout_height="32dp"
@@ -20,10 +112,10 @@
         android:textColor="#F8F8F8"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.464"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="0.102" />
+        app:layout_constraintVertical_bias="0.092" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -33,9 +125,10 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/BluetoothConnectTB"
-        app:layout_constraintVertical_bias="0.023">
+        app:layout_constraintVertical_bias="0.03">
 
         <TextView
             android:id="@+id/Taxi1TV"
@@ -63,37 +156,6 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/Hora_TV"
-        android:layout_width="307dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="4dp"
-        android:bottomLeftRadius="10dp"
-        android:bottomRightRadius="10dp"
-        android:fontFamily="@font/doppio_one"
-        android:gravity="center_horizontal|fill_vertical"
-        android:text="Hora:"
-        android:textAlignment="gravity"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:topLeftRadius="10dp"
-        android:topRightRadius="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Coords_TV" />
-
-    <Button
-        android:id="@+id/BluetoothConnectTB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
-        android:text="Desconectar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TV_Latitud2" />
-
-    <TextView
         android:id="@+id/getapp"
         android:layout_width="121dp"
         android:layout_height="58dp"
@@ -109,13 +171,14 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/TV_Latitud2"
-        app:layout_constraintVertical_bias="0.389" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/TV_Latitud2"
         android:layout_width="277dp"
         android:layout_height="35dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_bttn"
         android:bottomLeftRadius="10dp"
         android:bottomRightRadius="10dp"
         android:fontFamily="@font/doppio_one"
@@ -127,46 +190,8 @@
         android:topLeftRadius="10dp"
         android:topRightRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Hora_TV" />
-
-    <TextView
-        android:id="@+id/Coords_TV"
-        style="@style/Widget.AppCompat.TextView"
-        android:layout_width="304dp"
-        android:layout_height="95dp"
-
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/doppio_one"
-        android:gravity="center_horizontal|fill_vertical"
-        android:text="Coordenadas:"
-        android:textAlignment="gravity"
-        android:textAllCaps="false"
-        android:textColor="#FFFFFF"
-        android:textColorHighlight="#FFC200"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ToggleButton
-        android:id="@+id/BtSend"
-        android:layout_width="60dp"
-        android:layout_height="35dp"
-
-
-        android:layout_marginTop="28dp"
-        android:background="@drawable/toggle_switch"
-        android:text="ToggleButton"
-        android:textColor="#FFFFFF"
-        android:textOff=""
-        android:textOn=""
-        app:cornerRadius="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/TV_Latitud2"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/TV_Latitud2"
         app:layout_constraintTop_toBottomOf="@+id/Hora_TV" />
 
 
