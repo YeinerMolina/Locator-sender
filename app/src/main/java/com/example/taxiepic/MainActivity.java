@@ -127,26 +127,23 @@ public class MainActivity extends AppCompatActivity {
                     }else{
                         ID = "1";
                     }
-                    IPaddress = InetAddress.getByName("192.168.20.23");
                     String Mensaje =  String.valueOf(CoordendasTxt + ", "+TimeVar + ", " + ID);
+
+                    IPaddress = InetAddress.getByName("18.223.199.20");
                     udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
                     udpClientThread.start();
 
-                    //IPaddress = InetAddress.getByName("18.223.199.20");
-                    //udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
-                    //udpClientThread.start();
-//
-                    //IPaddress = InetAddress.getByName("52.71.214.41");
-                    //udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
-                    //udpClientThread.start();
-//
-                    //IPaddress = InetAddress.getByName("34.200.4.183");
-                    //udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
-                    //udpClientThread.start();
-//
-                    //IPaddress = InetAddress.getByName("34.235.195.32");
-                    //udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
-                    //udpClientThread.start();
+                    IPaddress = InetAddress.getByName("52.71.214.41");
+                    udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
+                    udpClientThread.start();
+
+                    IPaddress = InetAddress.getByName("34.200.4.183");
+                    udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
+                    udpClientThread.start();
+
+                    IPaddress = InetAddress.getByName("34.235.195.32");
+                    udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
+                    udpClientThread.start();
 
                     if(Status) {
                         handler.postDelayed(this, delay);
