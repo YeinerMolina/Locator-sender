@@ -66,11 +66,8 @@ public class MainActivity extends AppCompatActivity {
         BluetoothIn = new Handler() {
             public void handlerMessage(android.os.Message msg) {
                 if (msg.what == handlerState) {
-                    char MyCharacter = (char) msg.obj;
-
-                    if (MyCharacter == 'a') {
-                        Funciona.setText("Sí funciona");
-                    }
+                    String MyCharacter = (String) msg.obj;
+                    Funciona.setText(MyCharacter);
                 }
             }
         };
@@ -101,10 +98,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         BtSend.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
             if (ActivityCompat.checkSelfPermission(MainActivity.this,
                     Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) {
                 GetLocation();
-                GetBTData();
                 if (CoordendasTxt != null) {
                     if (BtSend.isChecked()) {
                         Status = true;
@@ -112,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                         Status = false;
                     }
                     Send_Data_UDP();
+
                 } else {
                     BtSend.setChecked(false);
                     Toast.makeText(MainActivity.this, "No hay coordenadas para enviar", Toast.LENGTH_SHORT).show();
@@ -138,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
     }
 
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
 
         Intent intent = getIntent();
@@ -147,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             btSocket = createBluetoothSocket(device);
-        }catch (IOException e){
+        } catch (IOException e) {
             Toast.makeText(getBaseContext(), "No se pudo crear socket", Toast.LENGTH_LONG).show();
         }
 
@@ -210,39 +208,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void GetBTData(){
-        MyConextionBT.write("Wenas");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1000);
+        }else{
+            MyConextionBT.write("010D");
+        }
     }
 
     public void Send_Data_UDP(){
         handler.postDelayed(new Runnable() {
             public void run() {
                 try {
+                    GetBTData();
                     PUERTO = 10000;
                     if(TaxiID.isChecked()){
                         ID = "2";
                     }else{
                         ID = "1";
                     }
-                    IPaddress = InetAddress.getByName("192.168.20.23");
+
                     String Mensaje =  String.valueOf(CoordendasTxt + ", "+TimeVar + ", " + ID);
+                    IPaddress = InetAddress.getByName("18.223.199.20");
                     udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
                     udpClientThread.start();
 
-                    //IPaddress = InetAddress.getByName("18.223.199.20");
-                    //udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
-                    //udpClientThread.start();
-//
-                    //IPaddress = InetAddress.getByName("52.71.214.41");
-                    //udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
-                    //udpClientThread.start();
-//
-                    //IPaddress = InetAddress.getByName("34.200.4.183");
-                    //udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
-                    //udpClientThread.start();
-//
-                    //IPaddress = InetAddress.getByName("34.235.195.32");
-                    //udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
-                    //udpClientThread.start();
+                    IPaddress = InetAddress.getByName("52.71.214.41");
+                    udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
+                    udpClientThread.start();
+
+                    IPaddress = InetAddress.getByName("34.200.4.183");
+                    udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
+                    udpClientThread.start();
+
+                    IPaddress = InetAddress.getByName("34.235.195.32");
+                    udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
+                    udpClientThread.start();
 
                     if(Status) {
                         handler.postDelayed(this, delay);
