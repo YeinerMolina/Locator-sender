@@ -23,9 +23,14 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 
+import com.github.pires.obd.commands.engine.RPMCommand;
+import com.github.pires.obd.commands.protocol.EchoOffCommand;
+import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
+import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
+import com.github.pires.obd.commands.protocol.TimeoutCommand;
+import com.github.pires.obd.enums.ObdProtocols;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.UUID;
@@ -47,12 +52,13 @@ public class MainActivity extends AppCompatActivity {
     String ID;
     Button BTConnect;
 
+    RPMCommand RPM = new RPMCommand();
+
     Handler BluetoothIn;
     final int handlerState = 0;
     private BluetoothAdapter btAdapter = null;
     private BluetoothSocket btSocket = null;
     private StringBuilder DataStringIN = new StringBuilder();
-    private ConnectedThread MyConextionBT;
 
     private static final UUID BTMODULEUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
@@ -63,15 +69,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BluetoothIn = new Handler() {
-            public void handlerMessage(android.os.Message msg) {
-                if (msg.what == handlerState) {
-                    String MyCharacter = (String) msg.obj;
-                    Funciona.setText(MyCharacter);
-                }
-            }
-        };
-
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         VerificarEstadoBT();
 
@@ -79,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         BTConnect = (Button) findViewById(R.id.BluetoothConnectTB);
         BtSend = (ToggleButton) findViewById(R.id.BtSend);
         Coords = (TextView) findViewById(R.id.Coords_TV);
-        Time = (TextView) findViewById(R.id.Hora_TV);
+        Time = (TextView) findViewById(R.id.hora_TV);
         TaxiID = (Switch) findViewById(R.id.TaxiSwitch);
 
         BTConnect.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
 
         BtSend.setOnCheckedChangeListener((buttonView, isChecked) -> {
 
@@ -129,6 +125,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void initialConfigCommands() {
+        try {
+            new EchoOffCommand().run(btSocket.getInputStream(), btSocket.getOutputStream());
+            new LineFeedOffCommand().run(btSocket.getInputStream(), btSocket.getOutputStream());
+            new TimeoutCommand(125).run(btSocket.getInputStream(), btSocket.getOutputStream());
+            new SelectProtocolCommand(ObdProtocols.AUTO).run(btSocket.getInputStream(), btSocket.getOutputStream());
+        }catch (IOException | InterruptedException e) {
+            Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
@@ -156,8 +163,6 @@ public class MainActivity extends AppCompatActivity {
                 btSocket.close();
             }catch (IOException e2){}
         }
-        MyConextionBT = new ConnectedThread(btSocket);
-        MyConextionBT.start();
 
     }
 
@@ -193,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                 CoordendasTxt = String.valueOf(location.getLatitude()) +", "+String.valueOf(location.getLongitude());
                 Coords.setText(String.valueOf("Coordenadas: \n"+ CoordendasTxt));
                 TimeVar = new java.text.SimpleDateFormat("yyyy/MM/dd, HH:mm:ss.SSS").format(location.getTime());
-                Time.setText(String.valueOf("Hora: \n" + TimeVar));
+                Time.setText(String.valueOf("Hora: " + TimeVar));
             }
         };
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -207,20 +212,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void GetBTData(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1000);
-        }else{
-            MyConextionBT.write("010D");
+    private String GetBTData(){
+        try{
+            while (!Thread.currentThread().isInterrupted()){
+                initialConfigCommands();
+                RPM.run(btSocket.getInputStream(), btSocket.getOutputStream());
+                return RPM.getFormattedResult();
+            }
+        }catch (IOException | InterruptedException e) {
+            Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
         }
+        return null;
     }
 
     public void Send_Data_UDP(){
         handler.postDelayed(new Runnable() {
             public void run() {
                 try {
-                    GetBTData();
+                    String RPMVar = GetBTData().replace("RPM","");
+                    Funciona.setText("RPM: " + RPMVar);
                     PUERTO = 10000;
                     if(TaxiID.isChecked()){
                         ID = "2";
@@ -228,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
                         ID = "1";
                     }
 
-                    String Mensaje =  String.valueOf(CoordendasTxt + ", "+TimeVar + ", " + ID);
+                    String Mensaje =  String.valueOf(CoordendasTxt + ", "+TimeVar + ", " + ID + ", " + RPMVar);
                     IPaddress = InetAddress.getByName("18.223.199.20");
                     udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
                     udpClientThread.start();
@@ -259,47 +269,5 @@ public class MainActivity extends AppCompatActivity {
             }}
             , delay);
     }
-
-
-    private class ConnectedThread extends Thread {
-
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
-
-        public ConnectedThread(BluetoothSocket socket){
-            InputStream tmpIn = null;
-            OutputStream tmpOut = null;
-            try {
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
-            }catch (IOException e){}
-            mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-        }
-
-        public void run(){
-            byte[] byte_in = new byte[1];
-            while(true){
-                try{
-                    mmInStream.read(byte_in);
-                    char ch = (char) byte_in[0];
-                    BluetoothIn.obtainMessage(handlerState, ch).sendToTarget();
-                }catch (IOException e){
-                    break;
-                }
-            }
-        }
-
-        public void write(String input){
-            try {
-                mmOutStream.write(input.getBytes());
-            }catch (IOException e2){
-                Toast.makeText(getBaseContext(),"La conexión falló", Toast.LENGTH_LONG).show();
-                finish();
-            }
-        }
-
-    }
-
 
 }
