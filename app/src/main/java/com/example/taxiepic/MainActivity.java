@@ -70,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        VerificarEstadoBT();
+        if(btSocket!=null){
+            VerificarEstadoBT();
+        }
 
         Funciona = (TextView) findViewById(R.id.Funciona);
         BTConnect = (Button) findViewById(R.id.BluetoothConnectTB);
@@ -85,11 +87,16 @@ public class MainActivity extends AppCompatActivity {
                 if (btSocket != null) {
                     try {
                         btSocket.close();
+                        BTConnect.setText("Conectar");
+                        btSocket = null;
                     } catch (IOException e) {
                         Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
                     }
-                    finish();
+                }else{
+                    Intent intent = new Intent(getBaseContext(), DispositivosVinculados.class);
+                    startActivity(intent);
                 }
+
             }
         });
 
@@ -123,6 +130,30 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1000);
         }
+        if (ActivityCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.checkSelfPermission(MainActivity.this,
+                    Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED) {
+                    if(btSocket!=null){
+                        GetBTData();
+                    }
+                } else {
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.BLUETOOTH_ADMIN}, 1000);
+                }
+
+            } else {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 1000);
+            }
+        } else {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.BLUETOOTH}, 1000);
+        }
     }
 
     private void initialConfigCommands() {
@@ -148,20 +179,24 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         address = intent.getStringExtra(DispositivosVinculados.EXTRA_DEVICE_ADDRESS);
-        BluetoothDevice device = btAdapter.getRemoteDevice(address);
-
-        try {
-            btSocket = createBluetoothSocket(device);
-        } catch (IOException e) {
-            Toast.makeText(getBaseContext(), "No se pudo crear socket", Toast.LENGTH_LONG).show();
-        }
-
-        try {
-            btSocket.connect();
-        }catch (IOException e){
+        if(address!=null && address!= "undefined"){
+            BluetoothDevice device = btAdapter.getRemoteDevice(address);
             try {
-                btSocket.close();
-            }catch (IOException e2){}
+                btSocket = createBluetoothSocket(device);
+            } catch (IOException e) {
+                Toast.makeText(getBaseContext(), "No se pudo crear socket", Toast.LENGTH_LONG).show();
+                btSocket = null;
+            }
+            try {
+                btSocket.connect();
+                BTConnect.setText("Desconectar");
+                GetBTData();
+            }catch (IOException e){
+                try {
+                    btSocket.close();
+                    BTConnect.setText("Conectar");
+                }catch (IOException e2){}
+            }
         }
 
     }
@@ -169,7 +204,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
         try {
-            btSocket.close();
+            if (btSocket != null) {
+                btSocket.close();
+            }
         }catch (IOException e){}
     }
 
@@ -229,16 +266,21 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             public void run() {
                 try {
-                    String RPMVar = GetBTData().replace("RPM","");
-                    Funciona.setText("RPM: " + RPMVar);
-                    PUERTO = 10000;
+                    String Mensaje;
                     if(TaxiID.isChecked()){
                         ID = "2";
                     }else{
                         ID = "1";
                     }
+                    if (btSocket != null) {
+                        String RPMVar = GetBTData().replace("RPM", "");
+                        Funciona.setText("RPM: " + RPMVar);
+                        Mensaje =  String.valueOf(CoordendasTxt + ", "+TimeVar + ", " + ID + ", " + RPMVar);
+                    }else{
+                        Mensaje =  String.valueOf(CoordendasTxt + ", "+TimeVar + ", " + ID + ", " + "00");
+                    }
+                    PUERTO = 10000;
 
-                    String Mensaje =  String.valueOf(CoordendasTxt + ", "+TimeVar + ", " + ID + ", " + RPMVar);
                     IPaddress = InetAddress.getByName("18.223.199.20");
                     udpClientThread = new UdpClientThread(PUERTO, Mensaje, IPaddress);
                     udpClientThread.start();
